@@ -1,0 +1,4 @@
+#!/bin/bash
+
+./server-setup $1
+./client-setup $1

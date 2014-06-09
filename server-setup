@@ -1,0 +1,13 @@
+#!/bin/bash
+
+for i in `nova list | grep $1 | awk '{print $12}' | sed 's/.*=//'`; do
+  #Checks for iperf on each server and installs if necessary
+  if [[ `ssh -o StrictHostKeyChecking=no ubuntu@$i 'which iperf'` ]]; then
+    echo "iperf is installed on $i";
+  else
+    ssh -o StrictHostKeyChecking=no ubuntu@$i 'wget http://iperf.fr/download/iperf_2.0.5/iperf_2.0.5-2_amd64 ; chmod +x iperf_2.0.5-2_amd64 ; sudo mv iperf_2.0.5-2_amd64 /usr/bin/iperf'
+  fi
+
+  scp ./run-server ubuntu@$i:~ 
+  ssh -o StrictHostKeyChecking=no ubuntu@$i 'echo "$(expr $(date +%M) + 1) $(date +%H) * * * /home/ubuntu/run-server" > mycron; crontab mycron'
+done

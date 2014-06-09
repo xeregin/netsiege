@@ -1,0 +1,10 @@
+#!/bin/bash
+if [[ `pgrep -fl iperf` ]]; then
+  echo "iperf server is already running on $i";
+  sudo killall iperf
+  echo "iperf server is restarting";
+else
+  echo "iperf was not running - Starting iperf...";
+fi
+
+sudo iperf -s -u -p 51 &
