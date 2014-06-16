@@ -1,0 +1,5 @@
+#!/bin/bash
+
+knife search node sat6 | egrep 'Environment|IP|Run' | sed ':a;N;$!ba;s/\n/ /g' | sed 's/ Envir/\nEnvir/g' | grep ovs-test | grep controller | awk '{print $4}' > controllers
+knife search node sat6 | egrep 'Environment|IP|Run' | sed ':a;N;$!ba;s/\n/ /g' | sed 's/ Envir/\nEnvir/g' | grep ovs-test | grep compute | awk '{print $4}' > computes
+ssh root@`cat controllers | head -n 1` "source openrc; nova list | grep ovs-test | sed 's/.*=//' | sed 's/ *|//'" > vms
