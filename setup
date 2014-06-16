@@ -1,4 +1,15 @@
 #!/bin/bash
 
-./server-setup $1
-./client-setup $1
+# ./setup instance_name protocol
+if [[ `nova list | grep $1` ]]; then
+  if [[ $2 == "tcp" || $2 == "udp"  || $2 == "all" ]]; then
+    ./server-setup $1 $2
+    ./client-setup $1 $2
+  else
+    echo "Usage: ./setup instance_name protocol"
+    echo "Unrecognized protocol: $2"
+    echo "Valid protocols: {tcp, udp, all}"
+  fi
+else
+  echo "Could not find instances with \"$1\" in the name."
+fi
