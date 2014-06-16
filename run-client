@@ -1,14 +1,17 @@
 #!/bin/bash
 
 # Makes sure there is at least 30 seconds to buffer the VM synchronization
-FIRST_IP=$( nova list | grep $1 awk '{print $12}' | sed 's/.*=//'` | head -n 1 )
+FIRST_IP=$( nova list | grep $1 | awk '{print $12}' | sed 's/.*=//' | head -n 1 )
 while [[ `ssh -o StrictHostKeyChecking=no ubuntu@$FIRST_IP 'date +%S'` > 30 ]]; do
   sleep 5;
 done
 
-#Runs client-command
-#for i in `nova list | grep $1 | awk '{print $12}' | sed 's/.*=//'`; do ssh ubuntu@$i 'echo "$(expr $(date +%M) + 1)-$(expr $(date +%M) + 10) $(date +%H) * * * /home/ubuntu/client-command" > mycron; crontab mycron'; done
+# Runs client-command every minute for the next 10 minutes
+#for i in `nova list | grep $1 | awk '{print $12}' | sed 's/.*=//'`; do
+#  ssh ubuntu@$i 'echo "$(expr $(date +%M) + 1)-$(expr $(date +%M) + 10) $(date +%H) * * * /home/ubuntu/client-command" > mycron; crontab mycron';
+#done
 
+# Runs client-command every minute in the current hour
 for i in `nova list | grep $1 | awk '{print $12}' | sed 's/.*=//'`; do
   ssh -o StrictHostKeyChecking=no ubuntu@$i 'echo "* $(date +%H) * * * /home/ubuntu/client-command" > mycron; crontab mycron';
 done

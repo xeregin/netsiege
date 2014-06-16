@@ -7,4 +7,4 @@ else
   echo "iperf was not running - Starting iperf...";
 fi
 
-sudo iperf -s -u -p 51 &
+sudo iperf -s -p 51 &

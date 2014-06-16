@@ -4,12 +4,15 @@ echo '#!/bin/bash' > client-command
 
 # 20 layer-minute depth with 8 threads - Theoretical simultaneous streams ~ VMs x VMs x (layer-minute) x 8
 for i in `nova list | grep $1 | awk '{print $12}' | sed 's/.*=//'`; do
-  echo "iperf -c $i -u -t 1200 -P 8 -p 51 &" >> client-command;
+  echo "iperf -c $i -u -t 1200 -P 32 -p 51 &" >> client-command;
 done
-chmod u+x client-command;
 
 # 1 layer (20 seconds) depth with maximum bandwidth and 4 threads - Theoretical simultaneous streams ~ VMs x VMs x 1 x 4
-#for i in `nova list | grep $1 | awk '{print $12}' | sed 's/.*=//'`; do echo "iperf -c $i -u -t 20 -b 10G -P 4 -p 51 &" >> client-command; done; chmod u+x client-command;
+#for i in `nova list | grep $1 | awk '{print $12}' | sed 's/.*=//'`; do
+#  echo "iperf -c $i -u -t 20 -b 10G -P 4 -p 51 &" >> client-command;
+#done
+
+chmod u+x client-command;
 
 #SCP the command files over
 for i in `nova list | grep $1 | awk '{print $12}' | sed 's/.*=//'`; do
