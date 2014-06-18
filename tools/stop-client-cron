@@ -1,0 +1,10 @@
+#!/bin/bash
+
+if [[ `nova list | grep "$1"` ]]; then
+  # Erases any existing cron jobs
+  for i in `nova list | grep $1 | awk '{print $12}' | sed 's/.*=//'`; do
+    ssh -o StrictHostKeyChecking=no ubuntu@$i 'echo "" > mycron; crontab mycron';
+  done
+else
+  echo "Could not find instances with \"$1\" in the name."
+fi
