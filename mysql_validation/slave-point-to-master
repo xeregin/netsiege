@@ -1,0 +1,8 @@
+MASTERIP=$(nova list | grep master | awk '{print $13}');
+echo "mysql -e \"stop slave; change master to master_host='$MASTERIP', master_user='slave_user', master_password='password'; start slave;\"" > slave-command
+chmod u+x ./slave-command
+
+for i in `nova list | grep slave | awk '{print $13}'`; do
+  scp ./slave-command ubuntu@$i:~/
+  ssh ubuntu@$i './slave-command'
+done

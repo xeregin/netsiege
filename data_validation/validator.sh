@@ -3,7 +3,8 @@
 echo "#!/bin/bash" > senddata.sh
 echo "" >> senddata.sh
 
-for i in `nova list | grep $1 | awk '{print $12}' | sed 's/.*=//'`; do
+#for i in `nova list | grep $1 | awk '{print $13}'`; do
+for i in `neutron floatingip-list | grep 10 | awk '{print $6}'`; do
   echo "scp \`hostname\`.0 ubuntu@$i:~/ &" >> senddata.sh
   echo "scp \`hostname\`.1 ubuntu@$i:~/ &" >> senddata.sh
   echo "scp \`hostname\`.2 ubuntu@$i:~/ &" >> senddata.sh
@@ -18,19 +19,21 @@ done
 
 chmod u+x senddata.sh
 
-for i in `nova list | grep $1 | awk '{print $12}' | sed 's/.*=//'`; do
+#for i in `nova list | grep $1 | awk '{print $13}'`; do
+for i in `neutron floatingip-list | grep 10 | awk '{print $6}'`; do
   scp ./datagen.sh ubuntu@$i:~/
   scp ./senddata.sh ubuntu@$i:~/
-  ssh -o StrictHostKeyChecking=no ubuntu@$i 'echo "$(expr $(date +%M) + 1) $(date +%H) * * * /home/ubuntu/datagen.sh" > mycron; crontab mycron';
-  ssh -o StrictHostKeyChecking=no ubuntu@$i 'echo "$(expr $(date +%M) + 3) $(date +%H) * * * /home/ubuntu/senddata.sh" >> mycron; crontab mycron';
+  ssh ubuntu@$i 'echo "$(expr $(date +%M) + 1) $(date +%H) * * * /home/ubuntu/datagen.sh" > mycron; crontab mycron';
+  ssh ubuntu@$i 'echo "$(expr $(date +%M) + 3) $(date +%H) * * * /home/ubuntu/senddata.sh" >> mycron; crontab mycron';
 done
 
-for i in `nova list | grep $1 | awk '{print $12}' | sed 's/.*=//'`; do
-  COMPLETED=$( ssh -o StrictHostKeyChecking=no ubuntu@$i 'ls -la | grep 101562500 | wc -l' )
+#for i in `nova list | grep $1 | awk '{print $13}'`; do
+for i in `neutron floatingip-list | grep 10 | awk '{print $6}'`; do
+  COMPLETED=$( ssh ubuntu@$i 'ls -la | grep 101562500 | wc -l' )
   #while [[ COMPLETED=`ssh -o StrictHostKeyChecking=no ubuntu@$i 'ls -la | grep 1015625000 | wc -l'` != 10 ]]; do
-  while [[ $COMPLETED != 10 ]]; do
+  while [[ $COMPLETED < 10 ]]; do
     echo "Waiting for binaries to be generated on VM `ssh ubuntu@$i 'hostname'`: $COMPLETED of 10" 
-    COMPLETED=$( ssh -o StrictHostKeyChecking=no ubuntu@$i 'ls -la | grep 101562500 | wc -l' )
+    COMPLETED=$( ssh ubuntu@$i 'ls -la | grep 101562500 | wc -l' )
   done
   echo "Binaries generated on `ssh ubuntu@$i 'hostname'`."
 done

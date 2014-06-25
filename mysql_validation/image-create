@@ -1,0 +1,3 @@
+for image in rax-mysql-master rax-mysql-slave{,2,3}; do
+  glance image-create --disk-format qcow2 --container-format bare --name $image --copy-from http://images.howopenstack.org/${image}.qcow2;
+done

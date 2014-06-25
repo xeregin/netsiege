@@ -1,4 +1,5 @@
-for i in `nova list | grep $1 | awk '{print $12}' | sed 's/.*=//'`; do
+#for i in `nova list | grep $1 | awk '{print $12}' | sed 's/.*=//'`; do
+for i in `neutron floatingip-list | grep 10 | awk '{print $6}'`; do
   ssh ubuntu@$i 'rm *.0'
   ssh ubuntu@$i 'rm *.1'
   ssh ubuntu@$i 'rm *.2'

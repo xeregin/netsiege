@@ -1,0 +1,3 @@
+for i in `neutron floatingip-list | grep 192.168 | awk '{print $6}'`; do
+  ssh ubuntu@$i "sudo sed -i 's/\(bind-address.*=\).*/\1 0.0.0.0/' /etc/mysql/my.cnf; sudo service mysql stop; sudo service mysql start";
+done

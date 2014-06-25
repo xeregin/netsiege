@@ -1,0 +1,3 @@
+for image in rax-mysql-master rax-mysql-slave{,2,3}; do
+  nova boot --image $image --flavor 3 --key-name novakey --nic net-id=`neutron net-list | grep GRE | awk '{print $2}'` $image;
+done
