@@ -4,5 +4,5 @@ chmod u+x ./slave-command
 
 for i in `nova list | grep slave | awk '{print $13}'`; do
   scp ./slave-command ubuntu@$i:~/
-  ssh ubuntu@$i './slave-command'
+  ssh ubuntu@$i 'sudo su root -c "./slave-command"'
 done

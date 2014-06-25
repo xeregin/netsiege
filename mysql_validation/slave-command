@@ -1,1 +1,1 @@
-mysql -e "stop slave; change master to master_host='10.127.102.137', master_user='slave_user', master_password='password'; start slave;"
+mysql -e "stop slave; change master to master_host='10.127.102.135', master_user='slave_user', master_password='password'; start slave;"

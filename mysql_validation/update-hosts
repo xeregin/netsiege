@@ -1,0 +1,11 @@
+MASTER=$(neutron floatingip-list | grep 192.168 | awk 'FNR == 1 {print $6}')
+SLAVE1=$(neutron floatingip-list | grep 192.168 | awk 'FNR == 2 {print $6}')
+SLAVE2=$(neutron floatingip-list | grep 192.168 | awk 'FNR == 3 {print $6}')
+SLAVE3=$(neutron floatingip-list | grep 192.168 | awk 'FNR == 4 {print $6}')
+
+for i in $MASTER $SLAVE1 $SLAVE2 $SLAVE3; do
+  ssh ubuntu@$i "sudo sed -i 's/^10.*[0-9]\([ \t]*rax-mysql-master\)$/$MASTER\1/' /etc/hosts"
+  ssh ubuntu@$i "sudo sed -i 's/^10.*[0-9]\([ \t]*rax-mysql-slave\)$/$SLAVE1\1/' /etc/hosts"
+  ssh ubuntu@$i "sudo sed -i 's/^10.*[0-9]\([ \t]*rax-mysql-slave2\)$/$SLAVE2\1/' /etc/hosts"
+  ssh ubuntu@$i "sudo sed -i 's/^10.*[0-9]\([ \t]*rax-mysql-slave3\)$/$SLAVE3\1/' /etc/hosts"
+done
