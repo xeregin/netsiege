@@ -1,0 +1,6 @@
+printf "" > ~/.ssh/config
+
+for i in `neutron floatingip-list | grep 10 | awk '{print $6}'`; do
+  echo "Host $i" >> ~/.ssh/config
+  echo "  IdentityFile ~/.ssh/novakey" >> ~/.ssh/config
+done
