@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # Makes sure there is at least 30 seconds to buffer the VM synchronization
-FIRST_IP=$( nova list | grep $1 | awk '{print $12}' | sed 's/.*=//' | head -n 1 )
+#FIRST_IP=$( nova list | grep $1 | awk '{print $12}' | sed 's/.*=//' | head -n 1 )
+FIRST_IP=$( neutron floatingip-list | awk '{print $6}' | head -n 1 )
 while [[ `ssh -o StrictHostKeyChecking=no ubuntu@$FIRST_IP 'date +%S'` > 30 ]]; do
   sleep 5;
 done
@@ -17,6 +18,7 @@ done
 #done
 
 # Runs client-command every minute for the next 10 hours
-for i in `nova list | grep $1 | awk '{print $12}' | sed 's/.*=//'`; do
+#for i in `nova list | grep $1 | awk '{print $12}' | sed 's/.*=//'`; do
+for i in `neutron floatingip-list | awk '{print $6}'`; do
   ssh -o StrictHostKeyChecking=no ubuntu@$i 'echo "* $(date +%H)-$(expr $(date +%H) + 9) * * * /home/ubuntu/client-command" > mycron; crontab mycron';
 done

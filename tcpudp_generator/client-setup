@@ -4,15 +4,18 @@ echo '#!/bin/bash' > client-command
 
 # 20 layer-minute depth with 8 threads - Theoretical simultaneous streams ~ VMs x VMs x (layer-minute) x 8
 if [[ $2 == "tcp" ]]; then
-  for i in `nova list | grep $1 | awk '{print $12}' | sed 's/.*=//'`; do
+  #for i in `nova list | grep $1 | awk '{print $12}' | sed 's/.*=//'`; do
+  for i in `neutron floatingip-list | awk '{print $6}'`; do
     echo "iperf -c $i -t 1200 -P 32 -p 51 &" >> client-command;
   done
 elif [[ $2 == "udp" ]]; then
-  for i in `nova list | grep $1 | awk '{print $12}' | sed 's/.*=//'`; do
+  #for i in `nova list | grep $1 | awk '{print $12}' | sed 's/.*=//'`; do
+  for i in `neutron floatingip-list | awk '{print $6}'`; do
     echo "iperf -c $i -u -t 1200 -P 32 -p 51 &" >> client-command;
   done
 elif [[ $2 == "all" ]]; then
-  for i in `nova list | grep $1 | awk '{print $12}' | sed 's/.*=//'`; do
+#  for i in `nova list | grep $1 | awk '{print $12}' | sed 's/.*=//'`; do
+  for i in `neutron floatingip-list | awk '{print $6}'`; do
     echo "iperf -c $i -t 1200 -P 16 -p 51 &" >> client-command;
     echo "iperf -c $i -u -t 1200 -P 16 -p 51 &" >> client-command;
   done
@@ -26,7 +29,8 @@ fi
 chmod u+x client-command;
 
 #SCP the command files over
-for i in `nova list | grep $1 | awk '{print $12}' | sed 's/.*=//'`; do
+#for i in `nova list | grep $1 | awk '{print $12}' | sed 's/.*=//'`; do
+for i in `neutron floatingip-list | awk '{print $6}'`; do
   scp {"client-command","kill-iperf"} ubuntu@$i:~ ;
 done
 

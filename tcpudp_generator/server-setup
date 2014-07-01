@@ -22,7 +22,8 @@ fi
 
 chmod u+x run-server
 
-for i in `nova list | grep $1 | awk '{print $12}' | sed 's/.*=//'`; do
+#for i in `nova list | grep $1 | awk '{print $12}' | sed 's/.*=//'`; do
+for i in `neutron floatingip-list | awk '{print $6}'`; do
   #Checks for iperf on each server and installs if necessary
   if [[ `ssh -o StrictHostKeyChecking=no ubuntu@$i 'which iperf'` ]]; then
     echo "iperf is installed on $i";
