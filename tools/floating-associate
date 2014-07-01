@@ -1,5 +1,9 @@
 for i in {1..10}; do
-  eval $(printf "neutron floatingip-associate ";
-         printf "`neutron floatingip-list | awk '/10.127.102/ {print $2}'`" | awk "FNR == $i" | tr '\n' ' ' ;
-         printf " `neutron port-list | grep $(nova list | grep ACTIVE | sed 's/.*=//' | sed 's/ .*//' | awk "FNR == $i") | awk '{print $2}'`");
+  FLOATING_IP_ID=$(neutron floatingip-list | awk '/10.127.102/ {print $2}' | awk "FNR==$i")
+  VM_IP=$(nova list | grep ACTIVE | sed 's/.*=//' | sed 's/ .*//' | awk "FNR==$i")
+  PORT_ID=$(neutron port-list | grep $VM_IP | awk '{print $2}')
+
+  if [[ $FLOATING_IP_ID && $PORT_ID ]]; then
+    echo "neutron floatingip-associate $FLOATING_IP_ID $PORT_ID"
+  fi
 done
