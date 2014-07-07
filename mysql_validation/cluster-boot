@@ -1,7 +1,7 @@
 for image in rax-mysql-master; do
-  nova boot --image $image --flavor 4 --availability-zone nova:node98-sat6-lab --key-name novakey --nic net-id=`neutron net-list | grep GRE | awk '{print $2}'` $image;
+  nova boot --image $image --flavor 5 --availability-zone nova:node98-sat6-lab --key-name novakey --nic net-id=`neutron net-list | grep GRE | awk '{print $2}'` $image;
 done
 
 for image in rax-mysql-slave{,2,3}; do
-  nova boot --image $image --flavor 4 --availability-zone nova:node98-sat6-lab --key-name novakey --nic net-id=`neutron net-list | grep GRE | awk '{print $2}'` $image;
+  nova boot --image $image --flavor 5 --availability-zone nova:node98-sat6-lab --key-name novakey --nic net-id=`neutron net-list | grep GRE | awk '{print $2}'` $image;
 done
