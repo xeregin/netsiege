@@ -1,7 +1,7 @@
-for i in {1..10}; do
-  FLOATING_IP_ID=$(neutron floatingip-list | awk '/10.127.102/ {print $2}' | awk "FNR==$i")
-  VM_IP=$(nova list | grep ACTIVE | sed 's/.*=//' | sed 's/ .*//' | awk "FNR==$i")
-  PORT_ID=$(neutron port-list | grep $VM_IP | awk '{print $2}')
+for i in {1..40}; do
+  FLOATING_IP_ID=$(neutron floatingip-list | awk '/10.233.0/ {print $2}' | awk "FNR==$i")
+  VM_IP=$(nova list | grep ACTIVE | sed 's/.*=//' | sed 's/ .*//' | awk "FNR==$i" | sed 's/,//')
+  PORT_ID=$(neutron port-list | grep \"$VM_IP\" | awk '{print $2}')
 
   if [[ $FLOATING_IP_ID && $PORT_ID ]]; then
     echo "neutron floatingip-associate $FLOATING_IP_ID $PORT_ID"
