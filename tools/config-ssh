@@ -4,3 +4,8 @@ for i in `neutron floatingip-list | grep 10 | awk '{print $6}'`; do
   echo "Host $i" >> ~/.ssh/config
   echo "  IdentityFile ~/.ssh/novakey" >> ~/.ssh/config
 done
+
+for i in `nova list | grep 192 | awk '{print $12}' | sed 's/.*=//' | sed 's/,//'`; do
+  echo "Host $i" >> ~/.ssh/config
+  echo "  IdentityFile ~/.ssh/novakey" >> ~/.ssh/config
+done
